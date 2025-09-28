@@ -115,21 +115,19 @@
 <div class="uk-margin-xlarge-left uk-margin-xlarge-right">
     <!-- Projects / Servers -->
 <!-- Night Stories (déjà avec son image) -->
-<div class="uk-card uk-card-secondary uk-card-body uk-margin">
-    <div class="uk-grid-small uk-flex-middle" uk-grid>
-        <div class="uk-width-auto">
-            <img src="https://i.imgur.com/DBpbuXj.png" alt="Logo Night Stories" style="width: 150px; height: auto;">
-        </div>
-        <div class="uk-width-expand">
-            <h4>Night Stories</h4>
-            <p>Night Stories is a lively and immersive city where every citizen can write their own story. You’ll find various legal jobs, illegal opportunities, businesses to develop and an active community for serious and entertaining roleplay.</p>
-            <a class="uk-button-text uk-text-decoration-none" href="#">
-                <span uk-icon="icon: link"></span>
-                <span id="nightstories-status">Chargement…</span>
-            </a>
-        </div>
+<div class="uk-grid-small uk-flex-middle" uk-grid>
+    <div class="uk-width-auto">
+        <img id="nightstories-icon" src="https://i.imgur.com/DBpbuXj.png" alt="Logo Night Stories" style="width: 150px; height: auto;">
+    </div>
+    <div class="uk-width-expand">
+        <h4 id="nightstories-name">Night Stories</h4>
+        <a class="uk-button-text uk-text-decoration-none" href="#">
+            <span uk-icon="icon: link"></span>
+            <span id="nightstories-status">Chargement…</span>
+        </a>
     </div>
 </div>
+
 
 <!-- Autres serveurs avec image "offline" -->
 <div class="uk-card uk-card-secondary uk-card-body uk-margin">
@@ -218,40 +216,50 @@
 </div>
     
 <script>
+async function fetchServerInfo(ip, port) {
+    const target = encodeURIComponent(`https://${ip}:${port}/info.json`);
+    const url = `https://api.allorigins.win/raw?url=${target}`;
+    const resp = await fetch(url, { cache: 'no-store' });
+    if (!resp.ok) throw new Error('Serveur inaccessible');
+    return await resp.json();
+}
+
 async function checkNightStories() {
     const statusEl = document.getElementById('nightstories-status');
-    const iconEl = document.getElementById('nightstories-icon');
     const nameEl = document.getElementById('nightstories-name');
+    const iconEl = document.getElementById('nightstories-icon');
+
+    statusEl.textContent = '… vérification …';
 
     try {
-        const resp = await fetch('fivem.php');
-        const data = await resp.json();
+        const data = await fetchServerInfo('rp.nightstories.fr', '30120');
 
-        if (!data.error) {
-            // Met à jour le nom du serveur
-            nameEl.textContent = data.info.vars.sv_hostname;
+        // Nom du serveur
+        nameEl.textContent = data.vars.sv_hostname || 'Night Stories';
 
-            // Met à jour le nombre de joueurs
-            statusEl.textContent = `✅ ${data.players}/${data.info.vars.sv_maxClients} joueurs`;
+        // Nombre de joueurs
+        const players = data.players || [];
+        const maxPlayers = data.vars.sv_maxClients || '?';
+        statusEl.textContent = `✅ ${players.length}/${maxPlayers} joueurs`;
 
-            // Met à jour l’icône
-            if (data.info.vars.icon) {
-                iconEl.src = `data:image/png;base64,${data.info.vars.icon}`;
-            }
+        // Icône (base64)
+        if (data.vars.icon) {
+            iconEl.src = `data:image/png;base64,${data.vars.icon}`;
         } else {
-            statusEl.textContent = '❌ Serveur hors ligne';
             iconEl.src = 'https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png';
         }
     } catch (e) {
         statusEl.textContent = '❌ Serveur hors ligne';
+        nameEl.textContent = 'Night Stories';
         iconEl.src = 'https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png';
     }
 }
 
-// Vérifie toutes les 15 secondes
-setInterval(checkNightStories, 15000);
+// Vérifie au chargement et toutes les 20 secondes
 checkNightStories();
+setInterval(checkNightStories, 20000);
 </script>
+
 
 </body>
 
