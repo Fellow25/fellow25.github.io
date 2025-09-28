@@ -1,18 +1,21 @@
 <?php
-header('Content-Type: application/json');
+$ip = "rp.nightstories.fr";
+$port = 30120;
 
-$ip = 'rp.nightstories.fr'; // ton serveur FiveM
-$port = '30120';
+$infoUrl = "http://$ip:$port/info.json"; // si HTTPS, changez en https
 
-$info = @file_get_contents("https://$ip:$port/info.json");
-$players = @file_get_contents("https://$ip:$port/players.json");
+$info = @file_get_contents($infoUrl);
 
-if ($info && $players) {
-    echo json_encode([
-        'info' => json_decode($info, true),
-        'players' => json_decode($players, true)
-    ]);
-} else {
-    http_response_code(503);
-    echo json_encode(['error' => 'offline']);
+if ($info === FALSE) {
+    echo json_encode(['error' => true]);
+    exit;
 }
+
+$data = json_decode($info, true);
+
+echo json_encode([
+    'error' => false,
+    'info' => $data,
+    'players' => $data['clients'] ?? 0
+]);
+?>
