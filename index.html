@@ -222,7 +222,14 @@ async function checkNightStories() {
   const statusEl = document.getElementById('nightstories-status');
 
   try {
-    const infoResp = await fetch(`https://${ip}:${port}/info.json`);
+    const resp = await fetch('fivem.php');
+    const data = await resp.json();
+    if (!data.error) {
+    statusEl.innerHTML =
+        `✅ ${data.info.vars.sv_hostname} – ${data.players.length}/${data.info.vars.sv_maxClients} joueurs`;
+    } else {
+    statusEl.textContent = '❌ Serveur hors ligne';
+    }
     const info = await infoResp.json();
 
     const playersResp = await fetch(`https://${ip}:${port}/players.json`);
