@@ -124,7 +124,7 @@
             <h4>Night Stories</h4>
             <p>Night Stories is a lively and immersive city where every citizen can write their own story. You’ll find various legal jobs, illegal opportunities, businesses to develop and an active community for serious and entertaining roleplay.</p>
             <a class="uk-button-text uk-text-decoration-none" href="#">
-                <span uk-icon="icon: link"></span> Server Online
+                <span id="server-status">… vérification …</span>
             </a>
         </div>
     </div>
@@ -213,7 +213,28 @@
 </section>
 <hr class="uk-margin-xlarge-left uk-margin-xlarge-right">
 </div>
-<!-- Projects Section Ends -->
+
+<script>
+async function checkServer() {
+    const statusEl = document.getElementById('server-status');
+    statusEl.textContent = '… vérification …';
+    
+    try {
+        // Utilisation d'un proxy pour éviter les problèmes CORS
+        const resp = await fetch('https://api.allorigins.win/raw?url=https://rp.nightstories.fr:30120/info.json', { cache: 'no-store' });
+        if (!resp.ok) throw new Error('Serveur inaccessible');
+
+        const data = await resp.json();
+        statusEl.textContent = `✅ Serveur en ligne (${data.players.length}/${data.vars.sv_maxClients} joueurs)`;
+    } catch (e) {
+        statusEl.textContent = '❌ Serveur hors ligne';
+    }
+}
+
+// Vérifie au chargement et toutes les 20 secondes
+checkServer();
+setInterval(checkServer, 20000);
+</script>
     
 </body>
 
