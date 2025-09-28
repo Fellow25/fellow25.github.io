@@ -99,7 +99,7 @@
 
 <div class="uk-margin-xlarge-left uk-margin-xlarge-right">
 
-<div class="uk-margin uk-card uk-card-secondary uk-card-body">
+<div class="uk-card uk-card-secondary uk-card-body uk-margin">
     <div class="uk-grid-small uk-flex-middle" uk-grid>
         <div class="uk-width-auto">
             <img src="https://i.imgur.com/DBpbuXj.png" alt="Logo Night Stories" style="width: 150px; height: auto;">
@@ -107,8 +107,8 @@
         <div class="uk-width-expand">
             <h4>Night Stories</h4>
             <p>Night Stories is a lively and immersive city where every citizen can write their own story. You’ll find various legal jobs, illegal opportunities, businesses to develop and an active community for serious and entertaining roleplay.</p>
-            <a id="nightstories-btn" class="uk-button-text uk-text-decoration-none" href="#">
-                <span uk-icon="icon: link"></span> Loading...
+            <a class="uk-button-text uk-text-decoration-none" href="#">
+                <span uk-icon="icon: link"></span> Server Online
             </a>
         </div>
     </div>
@@ -197,36 +197,6 @@
 <hr class="uk-margin-xlarge-left uk-margin-xlarge-right">
 </div>
     
-<script>
-async function getFiveMStatus(ip, port, buttonId) {
-    try {
-        // récupère les infos du serveur
-        const infoResponse = await fetch(`http://${ip}:${port}/info.json`);
-        const playersResponse = await fetch(`http://${ip}:${port}/players.json`);
-
-        if (!infoResponse.ok || !playersResponse.ok) throw new Error("Server offline");
-
-        const info = await infoResponse.json();
-        const players = await playersResponse.json();
-
-        const maxPlayers = info.vars.sv_maxClients;
-        const onlinePlayers = players.length;
-
-        const btn = document.getElementById(buttonId);
-        btn.innerHTML = `<span uk-icon="icon: link"></span> Server Online (${onlinePlayers}/${maxPlayers})`;
-        btn.href = `fivem://connect/${ip}:${port}`;
-    } catch (err) {
-        const btn = document.getElementById(buttonId);
-        btn.innerHTML = `<span uk-icon="icon: close"></span> Server Offline`;
-        btn.href = "#";
-        console.error(err);
-    }
-}
-
-// Appel pour Night Stories
-getFiveMStatus("rp.nightstories.fr", "30120", "nightstories-btn");
-</script>
-
 </body>
 
 </html>
