@@ -220,12 +220,15 @@ async function checkServer() {
     statusEl.textContent = '… vérification …';
     
     try {
-        // Utilisation d'un proxy pour éviter les problèmes CORS
+        // Proxy pour contourner CORS
         const resp = await fetch('https://api.allorigins.win/raw?url=https://rp.nightstories.fr:30120/info.json', { cache: 'no-store' });
         if (!resp.ok) throw new Error('Serveur inaccessible');
 
         const data = await resp.json();
-        statusEl.textContent = `✅ Serveur en ligne (${data.players.length}/${data.vars.sv_maxClients} joueurs)`;
+        const players = data.players.length || 0;
+        const maxPlayers = data.vars.sv_maxClients || '?';
+
+        statusEl.textContent = `✅ Serveur en ligne (${players}/${maxPlayers})`;
     } catch (e) {
         statusEl.textContent = '❌ Serveur hors ligne';
     }
