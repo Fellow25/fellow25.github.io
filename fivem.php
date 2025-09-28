@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
-$ip = 'rp.nightstories.fr';
+
+$ip = 'rp.nightstories.fr'; // ton serveur FiveM
 $port = '30120';
 
 $info = @file_get_contents("https://$ip:$port/info.json");
