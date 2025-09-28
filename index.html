@@ -107,8 +107,9 @@
         <div class="uk-width-expand">
             <h4>Night Stories</h4>
             <p>Night Stories is a lively and immersive city where every citizen can write their own story. You’ll find various legal jobs, illegal opportunities, businesses to develop and an active community for serious and entertaining roleplay.</p>
-            <a class="uk-button-text uk-text-decoration-none" href="#">
-                <span uk-icon="icon: link"></span> Server Online
+            <!-- le lien où on injecte l’état -->
+            <a id="server-status" class="uk-button-text uk-text-decoration-none" href="#">
+                <span uk-icon="icon: link"></span> Loading…
             </a>
         </div>
     </div>
@@ -197,6 +198,34 @@
 <hr class="uk-margin-xlarge-left uk-margin-xlarge-right">
 </div>
     
+<script>
+async function getServerData() {
+  // on passe par allorigins pour contourner CORS
+  const playersUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('http://rp.nightstories.fr:30120/players.json');
+  const infoUrl    = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('http://rp.nightstories.fr:30120/info.json');
+
+  try {
+    const [playersRes, infoRes] = await Promise.all([
+      fetch(playersUrl),
+      fetch(infoUrl)
+    ]);
+
+    if (!playersRes.ok || !infoRes.ok) throw new Error('Serveur hors ligne');
+
+    const players = await playersRes.json();
+    const info = await infoRes.json();
+
+    document.getElementById('server-status').innerHTML = 
+      `<span uk-icon="icon: link"></span> Server Online - ${players.length}/${info.vars.sv_maxClients}`;
+  } catch (err) {
+    document.getElementById('server-status').innerHTML = 
+      `<span uk-icon="icon: close"></span> Server Offline`;
+  }
+}
+
+getServerData();
+</script>
+
 </body>
 
 </html>
