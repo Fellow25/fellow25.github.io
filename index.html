@@ -214,39 +214,6 @@
 </section>
 <hr class="uk-margin-xlarge-left uk-margin-xlarge-right">
 </div>
-
-<script>
-async function checkNightStories() {
-  const ip = 'rp.nightstories.fr'; // ton IP ou domaine
-  const port = '30120';            // port du serveur (pas txAdmin)
-  const statusEl = document.getElementById('nightstories-status');
-
-  try {
-    const resp = await fetch('fivem.php');
-    const data = await resp.json();
-    if (!data.error) {
-    statusEl.innerHTML =
-        `✅ ${data.info.vars.sv_hostname} – ${data.players.length}/${data.info.vars.sv_maxClients} joueurs`;
-    } else {
-    statusEl.textContent = '❌ Serveur hors ligne';
-    }
-    const info = await infoResp.json();
-
-    const playersResp = await fetch(`https://${ip}:${port}/players.json`);
-    const players = await playersResp.json();
-
-    // Affiche le nom + joueurs connectés
-    statusEl.innerHTML = `✅ ${info.vars.sv_hostname} – ${players.length}/${info.vars.sv_maxClients} joueurs`;
-  } catch (e) {
-    statusEl.textContent = '❌ Serveur hors ligne';
-  }
-}
-
-// Vérifie toutes les 15s
-setInterval(checkNightStories, 15000);
-checkNightStories();
-</script>
-
     
 </body>
 
