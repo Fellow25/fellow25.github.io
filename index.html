@@ -124,7 +124,8 @@
             <h4>Night Stories</h4>
             <p>Night Stories is a lively and immersive city where every citizen can write their own story. You’ll find various legal jobs, illegal opportunities, businesses to develop and an active community for serious and entertaining roleplay.</p>
             <a class="uk-button-text uk-text-decoration-none" href="#">
-                <span uk-icon="icon: link"></span> Server Online
+                <span uk-icon="icon: link"></span>
+                <span id="nightstories-status">Chargement…</span>
             </a>
         </div>
     </div>
@@ -213,7 +214,32 @@
 </section>
 <hr class="uk-margin-xlarge-left uk-margin-xlarge-right">
 </div>
-<!-- Projects Section Ends -->
+
+<script>
+async function checkNightStories() {
+  const ip = 'rp.nightstories.fr'; // ton IP ou domaine
+  const port = '30120';            // port du serveur (pas txAdmin)
+  const statusEl = document.getElementById('nightstories-status');
+
+  try {
+    const infoResp = await fetch(`https://${ip}:${port}/info.json`);
+    const info = await infoResp.json();
+
+    const playersResp = await fetch(`https://${ip}:${port}/players.json`);
+    const players = await playersResp.json();
+
+    // Affiche le nom + joueurs connectés
+    statusEl.innerHTML = `✅ ${info.vars.sv_hostname} – ${players.length}/${info.vars.sv_maxClients} joueurs`;
+  } catch (e) {
+    statusEl.textContent = '❌ Serveur hors ligne';
+  }
+}
+
+// Vérifie toutes les 15s
+setInterval(checkNightStories, 15000);
+checkNightStories();
+</script>
+
     
 </body>
 
