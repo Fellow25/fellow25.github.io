@@ -99,7 +99,7 @@
 
 <div class="uk-margin-xlarge-left uk-margin-xlarge-right">
 
-<div class="uk-card uk-card-secondary uk-card-body uk-margin">
+<div class="uk-margin uk-card uk-card-secondary uk-card-body">
     <div class="uk-grid-small uk-flex-middle" uk-grid>
         <div class="uk-width-auto">
             <img src="https://i.imgur.com/DBpbuXj.png" alt="Logo Night Stories" style="width: 150px; height: auto;">
@@ -107,8 +107,8 @@
         <div class="uk-width-expand">
             <h4>Night Stories</h4>
             <p>Night Stories is a lively and immersive city where every citizen can write their own story. You’ll find various legal jobs, illegal opportunities, businesses to develop and an active community for serious and entertaining roleplay.</p>
-            <a class="uk-button-text uk-text-decoration-none" href="#">
-                <span uk-icon="icon: link"></span> Server Online
+            <a id="nightstories-btn" class="uk-button-text uk-text-decoration-none" href="#" target="_blank">
+                <span uk-icon="icon: link"></span> Loading...
             </a>
         </div>
     </div>
@@ -197,6 +197,40 @@
 <hr class="uk-margin-xlarge-left uk-margin-xlarge-right">
 </div>
     
+<script>
+async function updateServerStatus(ipPort, buttonId) {
+    const url = `https://servers-frontend.fivem.net/api/servers/single/${ipPort}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Server not reachable");
+
+        const data = await response.json();
+        const players = data.Data.clients;
+        const maxPlayers = data.Data.sv_maxclients;
+        const online = players >= 0;
+
+        const btn = document.getElementById(buttonId);
+        if (online) {
+            btn.innerHTML = `<span uk-icon="icon: link"></span> Server Online (${players}/${maxPlayers})`;
+            btn.href = `fivem://connect/${ipPort}`; // lance FiveM directement si cliqué
+        } else {
+            btn.innerHTML = `<span uk-icon="icon: close"></span> Server Offline`;
+            btn.href = "#";
+        }
+
+    } catch (err) {
+        const btn = document.getElementById(buttonId);
+        btn.innerHTML = `<span uk-icon="icon: close"></span> Server Offline`;
+        btn.href = "#";
+        console.error(err);
+    }
+}
+
+// Exemple pour Night Stories
+updateServerStatus("rp.nightstories.fr:30120", "nightstories-btn");
+</script>
+
 </body>
 
 </html>
